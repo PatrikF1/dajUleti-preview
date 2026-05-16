@@ -3,16 +3,17 @@
 const { useState: useStateL } = React;
 
 function LandingPage({ go }) {
+  const isMobile = useIsMobile();
   return (
     <div style={{ background: '#fff' }}>
       {/* HERO */}
       <section style={{
         background: 'var(--paper-warm)',
         borderBottom: '1px solid var(--line)',
-        padding: '80px 32px 60px',
+        padding: isMobile ? '40px 18px 36px' : '80px 32px 60px',
       }}>
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 60, alignItems: 'center' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.2fr 1fr', gap: isMobile ? 32 : 60, alignItems: 'center' }}>
             <div>
               <div style={{
                 display: 'inline-flex', alignItems: 'center', gap: 8,
@@ -24,7 +25,7 @@ function LandingPage({ go }) {
                 Beta — besplatno prvih 6 mjeseci
               </div>
               <h1 style={{
-                fontSize: 68, lineHeight: 1.02, letterSpacing: '-0.035em',
+                fontSize: isMobile ? 40 : 68, lineHeight: 1.02, letterSpacing: '-0.035em',
                 fontWeight: 800, margin: 0, color: 'var(--ink)',
               }}>
                 Treba ti pomoć?<br/>
@@ -35,8 +36,8 @@ function LandingPage({ go }) {
                 }}>Netko će uletit.</span>
               </h1>
               <p style={{
-                fontSize: 19, lineHeight: 1.5, color: 'var(--muted)',
-                marginTop: 28, marginBottom: 36, maxWidth: 480,
+                fontSize: isMobile ? 16 : 19, lineHeight: 1.5, color: 'var(--muted)',
+                marginTop: isMobile ? 18 : 28, marginBottom: isMobile ? 24 : 36, maxWidth: 480,
               }}>
                 Selidba, sitni majstor, čišćenje, vrt, čuvanje — objavi gig i netko iz tvog grada će uletit. Bez gnjaže, bez ugovora, bez komplikacija.
               </p>
@@ -48,7 +49,7 @@ function LandingPage({ go }) {
                   Pogledaj gigove
                 </Button>
               </div>
-              <div style={{ display: 'flex', gap: 28, marginTop: 36, color: 'var(--muted)', fontSize: 13 }}>
+              <div style={{ display: 'flex', gap: isMobile ? 18 : 28, marginTop: isMobile ? 24 : 36, color: 'var(--muted)', fontSize: 13, flexWrap: 'wrap' }}>
                 <div><strong style={{ color: 'var(--ink)', fontSize: 18 }}>1.847</strong>&nbsp; aktivnih korisnika</div>
                 <div><strong style={{ color: 'var(--ink)', fontSize: 18 }}>523</strong>&nbsp; gigova obavljeno</div>
                 <div><strong style={{ color: 'var(--ink)', fontSize: 18 }}>4.8★</strong>&nbsp; prosjek</div>
@@ -56,40 +57,53 @@ function LandingPage({ go }) {
             </div>
 
             {/* Hero card stack */}
-            <div style={{ position: 'relative', minHeight: 440 }}>
-              <HeroCard
-                style={{ position: 'absolute', top: 0, right: 40, transform: 'rotate(3deg)', zIndex: 1 }}
-                cat={CATEGORIES[2]} title="Generalka stana 60m²" city="Zagreb · Maksimir" price={90} interested={6}
-              />
-              <HeroCard
-                style={{ position: 'absolute', top: 90, right: 0, transform: 'rotate(-2deg)', zIndex: 3 }}
-                cat={CATEGORIES[0]} title="Pomoć oko selidbe iz garsonijere" city="Zagreb · Trešnjevka" price={80} interested={4} featured
-              />
-              <HeroCard
-                style={{ position: 'absolute', top: 220, right: 60, transform: 'rotate(2deg)', zIndex: 2 }}
-                cat={CATEGORIES[1]} title="Ko će mi sastaviti IKEA PAX?" city="Split · Bol" price={35} interested={2}
-              />
-              <HeroCard
-                style={{ position: 'absolute', top: 320, right: 20, transform: 'rotate(-1deg)', zIndex: 4 }}
-                cat={CATEGORIES[4]} title="Čuvanje dva mačka 5 dana" city="Zagreb · Centar" price={70} interested={9}
-              />
-            </div>
+            {isMobile ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <HeroCard
+                  style={{ width: '100%' }}
+                  cat={CATEGORIES[0]} title="Pomoć oko selidbe iz garsonijere" city="Zagreb · Trešnjevka" price={80} interested={4} featured
+                />
+                <HeroCard
+                  style={{ width: '100%' }}
+                  cat={CATEGORIES[4]} title="Čuvanje dva mačka 5 dana" city="Zagreb · Centar" price={70} interested={9}
+                />
+              </div>
+            ) : (
+              <div style={{ position: 'relative', minHeight: 440 }}>
+                <HeroCard
+                  style={{ position: 'absolute', top: 0, right: 40, transform: 'rotate(3deg)', zIndex: 1 }}
+                  cat={CATEGORIES[2]} title="Generalka stana 60m²" city="Zagreb · Maksimir" price={90} interested={6}
+                />
+                <HeroCard
+                  style={{ position: 'absolute', top: 90, right: 0, transform: 'rotate(-2deg)', zIndex: 3 }}
+                  cat={CATEGORIES[0]} title="Pomoć oko selidbe iz garsonijere" city="Zagreb · Trešnjevka" price={80} interested={4} featured
+                />
+                <HeroCard
+                  style={{ position: 'absolute', top: 220, right: 60, transform: 'rotate(2deg)', zIndex: 2 }}
+                  cat={CATEGORIES[1]} title="Ko će mi sastaviti IKEA PAX?" city="Split · Bol" price={35} interested={2}
+                />
+                <HeroCard
+                  style={{ position: 'absolute', top: 320, right: 20, transform: 'rotate(-1deg)', zIndex: 4 }}
+                  cat={CATEGORIES[4]} title="Čuvanje dva mačka 5 dana" city="Zagreb · Centar" price={70} interested={9}
+                />
+              </div>
+            )}
           </div>
         </div>
       </section>
 
       {/* HOW IT WORKS */}
-      <section style={{ padding: '80px 32px', background: '#fff' }}>
+      <section style={{ padding: isMobile ? '48px 18px' : '80px 32px', background: '#fff' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-          <div style={{ display: 'flex', alignItems: 'end', justifyContent: 'space-between', marginBottom: 48, flexWrap: 'wrap', gap: 16 }}>
-            <h2 style={{ fontSize: 44, letterSpacing: '-0.03em', fontWeight: 800, margin: 0, lineHeight: 1.05, color: 'var(--ink)' }}>
+          <div style={{ display: 'flex', alignItems: 'end', justifyContent: 'space-between', marginBottom: isMobile ? 28 : 48, flexWrap: 'wrap', gap: 16 }}>
+            <h2 style={{ fontSize: isMobile ? 30 : 44, letterSpacing: '-0.03em', fontWeight: 800, margin: 0, lineHeight: 1.05, color: 'var(--ink)' }}>
               Od ideje do<br/>obavljenog posla.
             </h2>
             <div style={{ fontSize: 14, color: 'var(--muted)', maxWidth: 340 }}>
               Tri koraka, pet minuta. Isti tok ako tražiš ili nudiš — jedan profil za oboje.
             </div>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: isMobile ? 14 : 24 }}>
             <Step n="01" title="Objavi ili pretraži" body="Opiši što ti treba ili pregledaj što ljudi traže u tvom gradu. Bez registracije za pregled."/>
             <Step n="02" title="Uleti i dogovori se" body="Klik na 'Uleti' — javi se naručitelju kroz chat. Dogovorite vrijeme i cijenu uz kavu."/>
             <Step n="03" title="Obavi i ocijenite se" body="Posao završen — obje strane se ocijene. Plus jedan posao u profilu, gradiš ugled."/>
@@ -98,19 +112,19 @@ function LandingPage({ go }) {
       </section>
 
       {/* CATEGORIES STRIP */}
-      <section style={{ padding: '0 32px 80px', background: '#fff' }}>
+      <section style={{ padding: isMobile ? '0 18px 48px' : '0 32px 80px', background: '#fff' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
           <div style={{
-            padding: 40, borderRadius: 24,
+            padding: isMobile ? 24 : 40, borderRadius: isMobile ? 18 : 24,
             background: 'var(--ink)', color: '#fff',
           }}>
             <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 12 }}>
               Što ljudi traže
             </div>
-            <h2 style={{ fontSize: 36, letterSpacing: '-0.03em', fontWeight: 800, margin: 0, marginBottom: 32 }}>
+            <h2 style={{ fontSize: isMobile ? 26 : 36, letterSpacing: '-0.03em', fontWeight: 800, margin: 0, marginBottom: isMobile ? 20 : 32 }}>
               Šest kategorija za početak.
             </h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: isMobile ? 10 : 14 }}>
               {CATEGORIES.map(c => (
                 <button key={c.id} onClick={() => go('lista', { category: c.id })} style={{
                   textAlign: 'left', padding: '20px 22px', borderRadius: 16,
@@ -138,58 +152,60 @@ function LandingPage({ go }) {
       </section>
 
       {/* CTA */}
-      <section style={{ padding: '80px 32px 100px', background: 'var(--paper-warm)', borderTop: '1px solid var(--line)', overflow: 'hidden' }}>
+      <section style={{ padding: isMobile ? '48px 18px 60px' : '80px 32px 100px', background: 'var(--paper-warm)', borderTop: '1px solid var(--line)', overflow: 'hidden' }}>
         <div style={{ maxWidth: 1000, margin: '0 auto' }}>
           <div style={{
             position: 'relative',
             background: 'var(--accent)',
-            borderRadius: 32,
-            padding: '64px 56px',
+            borderRadius: isMobile ? 22 : 32,
+            padding: isMobile ? '36px 24px' : '64px 56px',
             border: '2px solid var(--ink)',
-            boxShadow: '8px 8px 0 var(--ink)',
+            boxShadow: isMobile ? '5px 5px 0 var(--ink)' : '8px 8px 0 var(--ink)',
             display: 'grid',
-            gridTemplateColumns: '1fr auto',
+            gridTemplateColumns: isMobile ? '1fr' : '1fr auto',
             alignItems: 'center',
-            gap: 32,
-            overflow: 'visible',
+            gap: isMobile ? 16 : 32,
+            overflow: 'hidden',
           }}>
             <div style={{ zIndex: 2, position: 'relative' }}>
-              <h2 style={{ fontSize: 52, letterSpacing: '-0.035em', fontWeight: 800, margin: 0, color: 'var(--ink)', lineHeight: 1.02 }}>
+              <h2 style={{ fontSize: isMobile ? 34 : 52, letterSpacing: '-0.035em', fontWeight: 800, margin: 0, color: 'var(--ink)', lineHeight: 1.02 }}>
                 Spreman uletit?
               </h2>
-              <p style={{ fontSize: 17, color: 'var(--ink)', opacity: 0.75, marginTop: 16, marginBottom: 28, maxWidth: 420 }}>
+              <p style={{ fontSize: isMobile ? 15 : 17, color: 'var(--ink)', opacity: 0.75, marginTop: isMobile ? 12 : 16, marginBottom: isMobile ? 20 : 28, maxWidth: 420 }}>
                 Registracija traje 30 sekundi. Bez kartice, bez nikakvih obveza.
               </p>
               <Button variant="dark" size="lg" onClick={() => go('auth')}>
                 Napravi profil — besplatno
               </Button>
             </div>
-            <div style={{
-              position: 'relative',
-              width: 280, height: 280,
-              flexShrink: 0,
-            }}>
-              <img
-                src={(window.__resources && window.__resources.logo) || 'assets/logo.png'}
-                alt=""
-                aria-hidden="true"
-                style={{
-                  position: 'absolute',
-                  top: -40, right: -40,
-                  width: 360, height: 360,
-                  transform: 'rotate(-8deg)',
-                  filter: 'drop-shadow(4px 6px 0 rgba(14,14,16,0.15))',
-                  pointerEvents: 'none',
-                  objectFit: 'contain',
-                }}
-              />
-            </div>
+            {!isMobile && (
+              <div style={{
+                position: 'relative',
+                width: 280, height: 280,
+                flexShrink: 0,
+              }}>
+                <img
+                  src={(window.__resources && window.__resources.logo) || 'assets/logo.png'}
+                  alt=""
+                  aria-hidden="true"
+                  style={{
+                    position: 'absolute',
+                    top: -40, right: -40,
+                    width: 360, height: 360,
+                    transform: 'rotate(-8deg)',
+                    filter: 'drop-shadow(4px 6px 0 rgba(14,14,16,0.15))',
+                    pointerEvents: 'none',
+                    objectFit: 'contain',
+                  }}
+                />
+              </div>
+            )}
           </div>
         </div>
       </section>
 
       {/* FOOTER */}
-      <footer style={{ borderTop: '1px solid var(--line)', padding: '40px 32px', background: '#fff' }}>
+      <footer style={{ borderTop: '1px solid var(--line)', padding: isMobile ? '28px 18px' : '40px 32px', background: '#fff' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <Logo size={40}/>
@@ -213,8 +229,8 @@ function LandingPage({ go }) {
 function HeroCard({ style, cat, title, city, price, interested, featured }) {
   return (
     <div style={{
-      ...style,
       width: 320, padding: 18, borderRadius: 18,
+      ...style,
       background: '#fff',
       border: featured ? '2px solid var(--ink)' : '1px solid var(--line)',
       boxShadow: featured ? '0 12px 32px rgba(14,14,16,0.12)' : '0 6px 18px rgba(14,14,16,0.06)',
@@ -265,6 +281,7 @@ function Step({ n, title, body }) {
 
 // ---------- AUTH ----------
 function AuthPage({ go, onSignIn }) {
+  const isMobile = useIsMobile();
   const [mode, setMode] = useStateL('login');
   const [email, setEmail] = useStateL('');
   const [password, setPassword] = useStateL('');
@@ -283,11 +300,11 @@ function AuthPage({ go, onSignIn }) {
   }
 
   return (
-    <div style={{ background: 'var(--paper-warm)', minHeight: 'calc(100vh - 67px)', padding: '60px 32px' }}>
+    <div style={{ background: 'var(--paper-warm)', minHeight: 'calc(100vh - 67px)', padding: isMobile ? '32px 16px' : '60px 32px' }}>
       <div style={{ maxWidth: 440, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
-          <Logo size={96}/>
-          <h1 style={{ fontSize: 28, letterSpacing: '-0.025em', fontWeight: 800, margin: '16px 0 6px', color: 'var(--ink)' }}>
+          <Logo size={isMobile ? 72 : 96}/>
+          <h1 style={{ fontSize: isMobile ? 24 : 28, letterSpacing: '-0.025em', fontWeight: 800, margin: '16px 0 6px', color: 'var(--ink)' }}>
             {mode === 'login' ? 'Bok, opet!' : 'Daj uleti.'}
           </h1>
           <p style={{ fontSize: 14, color: 'var(--muted)', margin: 0 }}>
@@ -296,7 +313,7 @@ function AuthPage({ go, onSignIn }) {
         </div>
 
         <div style={{
-          background: '#fff', borderRadius: 20, padding: 28,
+          background: '#fff', borderRadius: 20, padding: isMobile ? 20 : 28,
           border: '1px solid var(--line)',
         }}>
           {/* Tabs */}

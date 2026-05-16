@@ -3,6 +3,7 @@
 const { useState: useStateF, useMemo: useMemoF } = React;
 
 function ListaPage({ go, ctx }) {
+  const isMobile = useIsMobile();
   const [cat, setCat] = useStateF(ctx?.category || 'all');
   const [city, setCity] = useStateF('');
   const [q, setQ] = useStateF('');
@@ -20,11 +21,11 @@ function ListaPage({ go, ctx }) {
   return (
     <div style={{ background: 'var(--paper-warm)', minHeight: 'calc(100vh - 67px)' }}>
       {/* HEADER STRIP */}
-      <div style={{ background: '#fff', borderBottom: '1px solid var(--line)', padding: '28px 32px 22px' }}>
+      <div style={{ background: '#fff', borderBottom: '1px solid var(--line)', padding: isMobile ? '20px 16px 16px' : '28px 32px 22px' }}>
         <div style={{ maxWidth: 1180, margin: '0 auto' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', marginBottom: 18, flexWrap: 'wrap', gap: 14 }}>
             <div>
-              <h1 style={{ fontSize: 36, letterSpacing: '-0.025em', fontWeight: 800, margin: 0, color: 'var(--ink)' }}>
+              <h1 style={{ fontSize: isMobile ? 26 : 36, letterSpacing: '-0.025em', fontWeight: 800, margin: 0, color: 'var(--ink)' }}>
                 Tko treba pomoć?
               </h1>
               <p style={{ fontSize: 14, color: 'var(--muted)', margin: '6px 0 0' }}>
@@ -37,7 +38,7 @@ function ListaPage({ go, ctx }) {
           </div>
 
           {/* Search + filters */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 200px 180px', gap: 10, marginBottom: 18 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 200px 180px', gap: 10, marginBottom: 18 }}>
             <Input value={q} onChange={e => setQ(e.target.value)} placeholder="Traži: 'selidba', 'IKEA', 'pas'…"
               prefix={<Icon.search size={16}/>}/>
             <PlacePicker value={city} onChange={setCity} includeAll allLabel="Sva mjesta"/>
@@ -65,11 +66,11 @@ function ListaPage({ go, ctx }) {
       </div>
 
       {/* RESULTS */}
-      <div style={{ maxWidth: 1180, margin: '0 auto', padding: '28px 32px 80px' }}>
+      <div style={{ maxWidth: 1180, margin: '0 auto', padding: isMobile ? '18px 16px 60px' : '28px 32px 80px' }}>
         {filtered.length === 0 ? (
           <EmptyState/>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 18 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(280px, 1fr))', gap: isMobile ? 14 : 18 }}>
             {filtered.map(g => <GigCard key={g.id} gig={g} go={go}/>)}
           </div>
         )}
@@ -168,6 +169,7 @@ function EmptyState() {
 
 // ---------- DETALJ ----------
 function DetaljPage({ go, ctx, appState, setAppState }) {
+  const isMobile = useIsMobile();
   const gig = GIGS.find(g => g.id === ctx?.gigId) || GIGS[0];
   const cat = CATEGORIES.find(c => c.id === gig.cat);
   const poster = USERS[gig.poster];
@@ -185,7 +187,7 @@ function DetaljPage({ go, ctx, appState, setAppState }) {
   return (
     <div style={{ background: 'var(--paper-warm)', minHeight: 'calc(100vh - 67px)', paddingBottom: 60 }}>
       {/* Breadcrumb */}
-      <div style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 32px 0' }}>
+      <div style={{ maxWidth: 1080, margin: '0 auto', padding: isMobile ? '14px 16px 0' : '20px 32px 0' }}>
         <button onClick={() => go('lista')} style={{
           display: 'inline-flex', alignItems: 'center', gap: 6,
           background: 'transparent', border: 'none', cursor: 'pointer',
@@ -195,11 +197,11 @@ function DetaljPage({ go, ctx, appState, setAppState }) {
         </button>
       </div>
 
-      <div style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 32px', display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 32 }}>
+      <div style={{ maxWidth: 1080, margin: '0 auto', padding: isMobile ? '14px 16px' : '20px 32px', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1.5fr 1fr', gap: isMobile ? 20 : 32 }}>
         {/* LEFT */}
         <div>
           {/* photos */}
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gridTemplateRows: '1fr 1fr', gap: 8, height: 360, marginBottom: 28 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gridTemplateRows: '1fr 1fr', gap: 8, height: isMobile ? 240 : 360, marginBottom: isMobile ? 18 : 28 }}>
             <div style={{ gridRow: '1 / 3' }}>
               <PhotoPlaceholder label={`${cat.name} — foto 1`}/>
             </div>
@@ -214,7 +216,7 @@ function DetaljPage({ go, ctx, appState, setAppState }) {
             <Badge>Objavljeno {gig.posted}</Badge>
           </div>
 
-          <h1 style={{ fontSize: 32, letterSpacing: '-0.025em', fontWeight: 800, margin: '6px 0 14px', lineHeight: 1.15, color: 'var(--ink)' }}>
+          <h1 style={{ fontSize: isMobile ? 24 : 32, letterSpacing: '-0.025em', fontWeight: 800, margin: '6px 0 14px', lineHeight: 1.15, color: 'var(--ink)' }}>
             {gig.title}
           </h1>
 
@@ -227,7 +229,7 @@ function DetaljPage({ go, ctx, appState, setAppState }) {
             <h3 style={{ margin: '0 0 14px', fontSize: 14, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-0.01em' }}>
               Što očekivati
             </h3>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 14 }}>
               <FactRow label="Procijenjeno trajanje" value="2–3 sata"/>
               <FactRow label="Broj ljudi" value="2 osobe"/>
               <FactRow label="Alat" value="Donijeti svoj"/>
@@ -251,9 +253,9 @@ function DetaljPage({ go, ctx, appState, setAppState }) {
         {/* RIGHT — sticky panel */}
         <aside>
           <div style={{
-            position: 'sticky', top: 90,
+            position: isMobile ? 'static' : 'sticky', top: 90,
             background: '#fff', borderRadius: 20, border: '1px solid var(--line)',
-            padding: 24, boxShadow: '0 4px 20px rgba(14,14,16,0.04)',
+            padding: isMobile ? 20 : 24, boxShadow: '0 4px 20px rgba(14,14,16,0.04)',
           }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 4 }}>
               <div style={{ fontSize: 36, fontWeight: 800, color: 'var(--ink)', letterSpacing: '-0.03em' }}>{gig.price} €</div>

@@ -3,6 +3,7 @@
 const { useState: useStateP, useRef: useRefP, useEffect: useEffectP } = React;
 
 function ProfilPage({ go, appState }) {
+  const isMobile = useIsMobile();
   const [tab, setTab] = useStateP('javio');
   const me = USERS.u_me;
 
@@ -14,10 +15,10 @@ function ProfilPage({ go, appState }) {
   return (
     <div style={{ background: 'var(--paper-warm)', minHeight: 'calc(100vh - 67px)' }}>
       {/* Profile header */}
-      <div style={{ background: '#fff', borderBottom: '1px solid var(--line)', padding: '40px 32px 30px' }}>
-        <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 22 }}>
+      <div style={{ background: '#fff', borderBottom: '1px solid var(--line)', padding: isMobile ? '24px 16px 20px' : '40px 32px 30px' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', alignItems: isMobile ? 'flex-start' : 'center', gap: isMobile ? 14 : 22, flexWrap: 'wrap' }}>
           <div style={{ position: 'relative' }}>
-            <Avatar user={me} size={88}/>
+            <Avatar user={me} size={isMobile ? 64 : 88}/>
             <div style={{
               position: 'absolute', bottom: -2, right: -2,
               background: '#fff', borderRadius: '50%', padding: 4,
@@ -29,21 +30,21 @@ function ProfilPage({ go, appState }) {
               </div>
             </div>
           </div>
-          <div style={{ flex: 1 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-              <h1 style={{ fontSize: 30, fontWeight: 800, margin: 0, letterSpacing: '-0.025em', color: 'var(--ink)' }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4, flexWrap: 'wrap' }}>
+              <h1 style={{ fontSize: isMobile ? 22 : 30, fontWeight: 800, margin: 0, letterSpacing: '-0.025em', color: 'var(--ink)' }}>
                 {me.name}
               </h1>
               <Badge tone="ink"><Icon.shield size={10}/> Verificiran</Badge>
             </div>
-            <div style={{ display: 'flex', gap: 18, fontSize: 13, color: 'var(--muted)' }}>
+            <div style={{ display: 'flex', gap: isMobile ? 10 : 18, fontSize: 13, color: 'var(--muted)', flexWrap: 'wrap' }}>
               <span><Icon.pin size={12}/> {me.city}</span>
               <span><Icon.star size={12}/> {me.rating.toFixed(1)} · {me.jobs} poslova</span>
               <span><Icon.clock size={12}/> Član od {me.since}</span>
             </div>
           </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <Button variant="ghost" size="sm">Uredi profil</Button>
+          <div style={{ display: 'flex', gap: 8, width: isMobile ? '100%' : 'auto' }}>
+            {!isMobile && <Button variant="ghost" size="sm">Uredi profil</Button>}
             <Button variant="dark" size="sm" onClick={() => go('objavi')} icon={<Icon.plus size={14}/>}>
               Novi gig
             </Button>
@@ -51,7 +52,7 @@ function ProfilPage({ go, appState }) {
         </div>
 
         {/* Stats row */}
-        <div style={{ maxWidth: 1100, margin: '28px auto 0', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }}>
+        <div style={{ maxWidth: 1100, margin: '28px auto 0', display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: isMobile ? 10 : 14 }}>
           <Stat label="Obavljenih poslova" value="12"/>
           <Stat label="Prosječna ocjena" value="4.9★"/>
           <Stat label="Response rate" value="98%"/>
@@ -60,8 +61,8 @@ function ProfilPage({ go, appState }) {
       </div>
 
       {/* Tabs */}
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '24px 32px' }}>
-        <div style={{ display: 'flex', gap: 6, borderBottom: '1px solid var(--line)', marginBottom: 24 }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto', padding: isMobile ? '16px 16px 40px' : '24px 32px' }}>
+        <div style={{ display: 'flex', gap: 6, borderBottom: '1px solid var(--line)', marginBottom: 24, overflowX: 'auto' }}>
           {[
             { id: 'javio',   label: 'Gigovi na koje sam se javio', count: myApps.length },
             { id: 'moji',    label: 'Moji objavljeni',              count: MY_POSTED.length },
@@ -73,7 +74,7 @@ function ProfilPage({ go, appState }) {
               fontSize: 14, fontWeight: tab === t.id ? 700 : 500,
               color: tab === t.id ? 'var(--ink)' : 'var(--muted)',
               borderBottom: '2px solid ' + (tab === t.id ? 'var(--ink)' : 'transparent'),
-              marginBottom: -1, fontFamily: 'inherit',
+              marginBottom: -1, fontFamily: 'inherit', whiteSpace: 'nowrap', flexShrink: 0,
             }}>
               {t.label} <span style={{ color: 'var(--muted)', fontWeight: 500 }}>({t.count})</span>
             </button>
@@ -113,8 +114,8 @@ function TabJavio({ apps, go }) {
         return (
           <div key={a.gigId} onClick={() => go('detalj', { gigId: gig.id })} style={{
             background: '#fff', borderRadius: 16, border: '1px solid var(--line)',
-            padding: 18, display: 'flex', alignItems: 'center', gap: 16, cursor: 'pointer',
-            transition: 'transform 0.1s ease',
+            padding: 18, display: 'flex', alignItems: 'center', gap: 14, cursor: 'pointer',
+            transition: 'transform 0.1s ease', flexWrap: 'wrap',
           }}
             onMouseEnter={e => e.currentTarget.style.transform = 'translateX(2px)'}
             onMouseLeave={e => e.currentTarget.style.transform = 'translateX(0)'}
@@ -232,6 +233,7 @@ function EmptyTab({ text, cta, onCta }) {
 
 // ====================== CHAT ======================
 function ChatPage({ go, ctx, appState }) {
+  const isMobile = useIsMobile();
   // Build list of threads: anyone "me" applied to + the default one
   const threads = useMemoChat(() => {
     const ids = new Set(['g1', ...appState.applied, 'g3']);
@@ -250,33 +252,47 @@ function ChatPage({ go, ctx, appState }) {
 
   const initialId = ctx?.gigId || threads[0]?.gigId || 'g1';
   const [activeId, setActiveId] = useStateP(initialId);
+  const [mobileView, setMobileView] = useStateP(ctx?.gigId ? 'conv' : 'list');
   const active = threads.find(t => t.gigId === activeId) || threads[0];
+
+  function selectThread(id) {
+    setActiveId(id);
+    setMobileView('conv');
+  }
 
   return (
     <div style={{ background: 'var(--paper-warm)', height: 'calc(100vh - 67px)', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ maxWidth: 1180, margin: '0 auto', padding: '20px 32px 0', width: '100%' }}>
-        <h1 style={{ fontSize: 28, letterSpacing: '-0.025em', fontWeight: 800, margin: 0, color: 'var(--ink)' }}>
+      <div style={{ maxWidth: 1180, margin: '0 auto', padding: isMobile ? '14px 16px 0' : '20px 32px 0', width: '100%' }}>
+        <h1 style={{ fontSize: isMobile ? 22 : 28, letterSpacing: '-0.025em', fontWeight: 800, margin: 0, color: 'var(--ink)' }}>
           Poruke
         </h1>
       </div>
 
-      <div style={{ maxWidth: 1180, margin: '20px auto 0', padding: '0 32px 20px', width: '100%', flex: 1, minHeight: 0 }}>
+      <div style={{ maxWidth: 1180, margin: isMobile ? '12px auto 0' : '20px auto 0', padding: isMobile ? '0 12px 12px' : '0 32px 20px', width: '100%', flex: 1, minHeight: 0 }}>
         <div style={{
           background: '#fff', borderRadius: 20, border: '1px solid var(--line)',
-          display: 'grid', gridTemplateColumns: '320px 1fr', height: '100%', overflow: 'hidden',
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : '320px 1fr',
+          height: '100%', overflow: 'hidden',
         }}>
           {/* Thread list */}
-          <div style={{ borderRight: '1px solid var(--line)', overflow: 'auto' }}>
-            <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--line)' }}>
-              <Input placeholder="Traži razgovor…" prefix={<Icon.search size={14}/>}/>
+          {(!isMobile || mobileView === 'list') && (
+            <div style={{ borderRight: isMobile ? 'none' : '1px solid var(--line)', overflow: 'auto' }}>
+              <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--line)' }}>
+                <Input placeholder="Traži razgovor…" prefix={<Icon.search size={14}/>}/>
+              </div>
+              {threads.map(t => (
+                <ThreadRow key={t.gigId} t={t} active={t.gigId === activeId} onClick={() => selectThread(t.gigId)}/>
+              ))}
             </div>
-            {threads.map(t => (
-              <ThreadRow key={t.gigId} t={t} active={t.gigId === activeId} onClick={() => setActiveId(t.gigId)}/>
-            ))}
-          </div>
+          )}
 
           {/* Active conversation */}
-          {active ? <Conversation thread={active} go={go}/> : <NoChat/>}
+          {(!isMobile || mobileView === 'conv') && (
+            active
+              ? <Conversation thread={active} go={go} isMobile={isMobile} onBack={() => setMobileView('list')}/>
+              : <NoChat/>
+          )}
         </div>
       </div>
     </div>
@@ -317,7 +333,7 @@ function ThreadRow({ t, active, onClick }) {
   );
 }
 
-function Conversation({ thread, go }) {
+function Conversation({ thread, go, isMobile, onBack }) {
   const [draft, setDraft] = useStateP('');
   const [extra, setExtra] = useStateP([]);
   const [showDone, setShowDone] = useStateP(false);
@@ -346,19 +362,27 @@ function Conversation({ thread, go }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: 0 }}>
       {/* Header */}
-      <div style={{ padding: '14px 22px', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', gap: 14 }}>
-        <Avatar user={thread.other} size={40}/>
-        <div style={{ flex: 1 }}>
+      <div style={{ padding: isMobile ? '10px 14px' : '14px 22px', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', gap: isMobile ? 10 : 14 }}>
+        {isMobile && onBack && (
+          <button onClick={onBack} aria-label="Natrag" style={{
+            background: 'transparent', border: 'none', cursor: 'pointer', padding: 4,
+            color: 'var(--ink)', display: 'flex', alignItems: 'center',
+          }}><Icon.back size={20}/></button>
+        )}
+        <Avatar user={thread.other} size={isMobile ? 36 : 40}/>
+        <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--ink)' }}>{thread.other.name}</div>
           <div style={{ fontSize: 12, color: 'var(--muted)' }}>
             <Icon.star size={10}/> {thread.other.rating.toFixed(1)} · {thread.other.jobs} poslova
           </div>
         </div>
-        <Button variant="ghost" size="sm" onClick={() => go('detalj', { gigId: thread.gigId })}>
-          Otvori gig
-        </Button>
+        {!isMobile && (
+          <Button variant="ghost" size="sm" onClick={() => go('detalj', { gigId: thread.gigId })}>
+            Otvori gig
+          </Button>
+        )}
         <Button variant="primary" size="sm" onClick={() => setShowDone(true)}>
-          Posao gotov ✓
+          {isMobile ? '✓ Gotov' : 'Posao gotov ✓'}
         </Button>
       </div>
 

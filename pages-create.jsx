@@ -3,6 +3,7 @@
 const { useState: useStateC } = React;
 
 function ObjaviPage({ go }) {
+  const isMobile = useIsMobile();
   const [step, setStep] = useStateC(1);
   const [data, setData] = useStateC({
     title: '', desc: '', cat: '', city: 'Zagreb', area: '', price: '', urgency: 'Ovaj tjedan',
@@ -24,10 +25,10 @@ function ObjaviPage({ go }) {
   if (step === 5) return <ObjaviSuccess data={data} go={go}/>;
 
   return (
-    <div style={{ background: 'var(--paper-warm)', minHeight: 'calc(100vh - 67px)', padding: '32px 32px 80px' }}>
+    <div style={{ background: 'var(--paper-warm)', minHeight: 'calc(100vh - 67px)', padding: isMobile ? '20px 16px 60px' : '32px 32px 80px' }}>
       <div style={{ maxWidth: 740, margin: '0 auto' }}>
         {/* Header */}
-        <div style={{ marginBottom: 28 }}>
+        <div style={{ marginBottom: isMobile ? 20 : 28 }}>
           <button onClick={() => step > 1 ? setStep(step - 1) : go('landing')} style={{
             display: 'inline-flex', alignItems: 'center', gap: 6,
             background: 'transparent', border: 'none', cursor: 'pointer',
@@ -35,7 +36,7 @@ function ObjaviPage({ go }) {
           }}>
             <Icon.back size={14}/> {step > 1 ? 'Korak natrag' : 'Početna'}
           </button>
-          <h1 style={{ fontSize: 36, letterSpacing: '-0.025em', fontWeight: 800, margin: 0, color: 'var(--ink)' }}>
+          <h1 style={{ fontSize: isMobile ? 28 : 36, letterSpacing: '-0.025em', fontWeight: 800, margin: 0, color: 'var(--ink)' }}>
             Objavi gig.
           </h1>
           <p style={{ fontSize: 15, color: 'var(--muted)', margin: '8px 0 0' }}>
@@ -54,10 +55,10 @@ function ObjaviPage({ go }) {
           ))}
         </div>
 
-        <div style={{ background: '#fff', borderRadius: 20, border: '1px solid var(--line)', padding: 32 }}>
-          {step === 1 && <Step1 data={data} update={update}/>}
-          {step === 2 && <Step2 data={data} update={update}/>}
-          {step === 3 && <Step3 data={data} update={update}/>}
+        <div style={{ background: '#fff', borderRadius: 20, border: '1px solid var(--line)', padding: isMobile ? 20 : 32 }}>
+          {step === 1 && <Step1 data={data} update={update} isMobile={isMobile}/>}
+          {step === 2 && <Step2 data={data} update={update} isMobile={isMobile}/>}
+          {step === 3 && <Step3 data={data} update={update} isMobile={isMobile}/>}
           {step === 4 && <Step4 data={data} update={update}/>}
         </div>
 
@@ -83,11 +84,11 @@ function ObjaviPage({ go }) {
   );
 }
 
-function Step1({ data, update }) {
+function Step1({ data, update, isMobile }) {
   return (
     <>
       <StepHeader n="01" title="Što ti treba?" sub="Odaberi kategoriju koja najbolje opisuje posao."/>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)', gap: 10 }}>
         {CATEGORIES.map(c => (
           <button key={c.id} onClick={() => update('cat', c.id)} style={{
             padding: 20, borderRadius: 14, cursor: 'pointer', textAlign: 'left',
@@ -105,7 +106,7 @@ function Step1({ data, update }) {
   );
 }
 
-function Step2({ data, update }) {
+function Step2({ data, update, isMobile }) {
   const titleOk = data.title.trim().length >= 3;
   const descOk  = data.desc.trim().length  >= 10;
   return (
@@ -139,7 +140,7 @@ function Step2({ data, update }) {
           <Textarea value={data.desc} onChange={e => update('desc', e.target.value)} rows={6} placeholder="Selim se s 3. kata bez lifta na 1. kat u drugoj zgradi. Cca 2-3h posla, krevet + kauč + frizider + kutije..."/>
         </Field>
         <Field label="Fotke (opcionalno)">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)', gap: 10 }}>
             {[0,1,2].map(i => (
               <div key={i} style={{
                 aspectRatio: '1', borderRadius: 12,
@@ -158,11 +159,11 @@ function Step2({ data, update }) {
   );
 }
 
-function Step3({ data, update }) {
+function Step3({ data, update, isMobile }) {
   return (
     <>
       <StepHeader n="03" title="Gdje?" sub="Odaberi mjesto — točnu adresu razmijenite kroz chat."/>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 14 }}>
         <Field label="Grad ili općina">
           <PlacePicker value={data.city} onChange={v => update('city', v)} placeholder="Odaberi mjesto…"/>
         </Field>
@@ -172,7 +173,7 @@ function Step3({ data, update }) {
       </div>
       <div style={{ marginTop: 22 }}>
         <Field label="Kad?">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: 8 }}>
             {['Hitno', 'Danas', 'Ovaj tjedan', 'Fleksibilno'].map(u => (
               <button key={u} onClick={() => update('urgency', u)} style={{
                 padding: '12px', borderRadius: 12, cursor: 'pointer',

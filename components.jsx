@@ -2,6 +2,25 @@
 
 const { useState, useEffect, useRef, useMemo } = React;
 
+// ---------- RESPONSIVE HOOK ----------
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' ? window.innerWidth <= breakpoint : false
+  );
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${breakpoint}px)`);
+    const handler = (e) => setIsMobile(e.matches);
+    setIsMobile(mq.matches);
+    if (mq.addEventListener) mq.addEventListener('change', handler);
+    else mq.addListener(handler);
+    return () => {
+      if (mq.removeEventListener) mq.removeEventListener('change', handler);
+      else mq.removeListener(handler);
+    };
+  }, [breakpoint]);
+  return isMobile;
+}
+
 // ---------- ICONS (inline SVG, single stroke) ----------
 const Icon = {
   search: (p = {}) => <svg viewBox="0 0 24 24" width={p.size || 18} height={p.size || 18} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>,
@@ -203,6 +222,8 @@ function Badge({ children, tone = 'neutral' }) {
 
 // ---------- TOPNAV ----------
 function TopNav({ route, go, signedIn, onSignOut }) {
+  const isMobile = useIsMobile();
+  const [menuOpen, setMenuOpen] = useState(false);
   const linkStyle = (active) => ({
     fontSize: 14, fontWeight: 500, color: active ? 'var(--ink)' : 'var(--muted)',
     textDecoration: 'none', cursor: 'pointer',
@@ -211,17 +232,18 @@ function TopNav({ route, go, signedIn, onSignOut }) {
   return (
     <nav style={{
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      padding: '14px 32px', borderBottom: '1px solid var(--line)',
+      padding: isMobile ? '10px 16px' : '14px 32px',
+      borderBottom: '1px solid var(--line)',
       background: '#fff', position: 'sticky', top: 0, zIndex: 10
     }}>
-      <div onClick={() => go('landing')} style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
-        <Logo size={48} />
-        <span style={{ fontWeight: 800, fontSize: 19, letterSpacing: '-0.02em', color: 'var(--ink)' }}>
+      <div onClick={() => { setMenuOpen(false); go('landing'); }} style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}>
+        <Logo size={isMobile ? 36 : 48} />
+        <span style={{ fontWeight: 800, fontSize: isMobile ? 17 : 19, letterSpacing: '-0.02em', color: 'var(--ink)' }}>
           daj<span style={{ color: 'var(--accent-fg)' }}>Uleti</span>
         </span>
       </div>
 
-      {signedIn &&
+      {signedIn && !isMobile &&
       <div style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
           <a style={linkStyle(route === 'lista')} onClick={() => go('lista')}>Pretraži gigove</a>
           <a style={linkStyle(route === 'objavi')} onClick={() => go('objavi')}>Objavi gig</a>
@@ -229,25 +251,57 @@ function TopNav({ route, go, signedIn, onSignOut }) {
         </div>
       }
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? 6 : 10 }}>
         {signedIn ?
         <>
             <button onClick={() => go('profil')} style={{
             background: 'transparent', border: '1px solid var(--line)', borderRadius: 999,
-            padding: '6px 6px 6px 14px', display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer',
+            padding: isMobile ? 2 : '6px 6px 6px 14px',
+            display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer',
             fontFamily: 'inherit', color: 'var(--ink)', fontSize: 13, fontWeight: 500
           }}>
-              Ti
-              <Avatar user={USERS.u_me} size={28} />
+              {!isMobile && 'Ti'}
+              <Avatar user={USERS.u_me} size={isMobile ? 32 : 28} />
             </button>
+            {isMobile && (
+              <button onClick={() => setMenuOpen(o => !o)} aria-label="Menu" style={{
+                background: 'transparent', border: '1px solid var(--line)', borderRadius: 10,
+                width: 38, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: 'pointer', color: 'var(--ink)',
+              }}>
+                {menuOpen ? <Icon.close size={18}/> : <Icon.filter size={18}/>}
+              </button>
+            )}
           </> :
 
         <>
             <Button variant="ghost" size="sm" onClick={() => go('auth')}>Prijavi se</Button>
-            <Button variant="dark" size="sm" onClick={() => go('auth')}>Registracija</Button>
+            {!isMobile && <Button variant="dark" size="sm" onClick={() => go('auth')}>Registracija</Button>}
           </>
         }
       </div>
+
+      {signedIn && isMobile && menuOpen && (
+        <div style={{
+          position: 'absolute', top: '100%', left: 0, right: 0,
+          background: '#fff', borderBottom: '1px solid var(--line)',
+          display: 'flex', flexDirection: 'column', padding: '8px 16px 14px', gap: 4,
+          boxShadow: '0 8px 20px rgba(0,0,0,0.06)',
+        }}>
+          {[
+            { id: 'lista',  label: 'Pretraži gigove' },
+            { id: 'objavi', label: 'Objavi gig' },
+            { id: 'chat',   label: 'Poruke' },
+            { id: 'profil', label: 'Profil' },
+          ].map(item => (
+            <a key={item.id} onClick={() => { setMenuOpen(false); go(item.id); }} style={{
+              padding: '12px 6px', fontSize: 15, fontWeight: 600,
+              color: route === item.id ? 'var(--ink)' : 'var(--muted)',
+              cursor: 'pointer', borderRadius: 8,
+            }}>{item.label}</a>
+          ))}
+        </div>
+      )}
     </nav>);
 
 }
@@ -271,5 +325,5 @@ function Logo({ size = 56 }) {
 
 Object.assign(window, {
   Icon, Avatar, Stars, Button, Field, Input, Textarea,
-  CategoryPill, PhotoPlaceholder, Badge, TopNav, Logo
+  CategoryPill, PhotoPlaceholder, Badge, TopNav, Logo, useIsMobile
 });
