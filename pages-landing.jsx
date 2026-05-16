@@ -56,38 +56,35 @@ function LandingPage({ go }) {
               </div>
             </div>
 
-            {/* Hero card stack */}
-            {isMobile ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                <HeroCard
-                  style={{ width: '100%' }}
-                  cat={CATEGORIES[0]} title="Pomoć oko selidbe iz garsonijere" city="Zagreb · Trešnjevka" price={80} interested={4} featured
-                />
-                <HeroCard
-                  style={{ width: '100%' }}
-                  cat={CATEGORIES[4]} title="Čuvanje dva mačka 5 dana" city="Zagreb · Centar" price={70} interested={9}
-                />
-              </div>
-            ) : (
-              <div style={{ position: 'relative', minHeight: 440 }}>
-                <HeroCard
-                  style={{ position: 'absolute', top: 0, right: 40, transform: 'rotate(3deg)', zIndex: 1 }}
-                  cat={CATEGORIES[2]} title="Generalka stana 60m²" city="Zagreb · Maksimir" price={90} interested={6}
-                />
-                <HeroCard
-                  style={{ position: 'absolute', top: 90, right: 0, transform: 'rotate(-2deg)', zIndex: 3 }}
-                  cat={CATEGORIES[0]} title="Pomoć oko selidbe iz garsonijere" city="Zagreb · Trešnjevka" price={80} interested={4} featured
-                />
-                <HeroCard
-                  style={{ position: 'absolute', top: 220, right: 60, transform: 'rotate(2deg)', zIndex: 2 }}
-                  cat={CATEGORIES[1]} title="Ko će mi sastaviti IKEA PAX?" city="Split · Bol" price={35} interested={2}
-                />
-                <HeroCard
-                  style={{ position: 'absolute', top: 320, right: 20, transform: 'rotate(-1deg)', zIndex: 4 }}
-                  cat={CATEGORIES[4]} title="Čuvanje dva mačka 5 dana" city="Zagreb · Centar" price={70} interested={9}
-                />
-              </div>
-            )}
+            {/* Hero card stack — rotirane kartice, manje na mobile */}
+            <div style={{
+              position: 'relative',
+              minHeight: isMobile ? 380 : 440,
+              maxWidth: isMobile ? 320 : 'none',
+              margin: isMobile ? '0 auto' : 0,
+              width: '100%',
+            }}>
+              <HeroCard
+                mobile={isMobile}
+                style={{ position: 'absolute', top: 0, right: isMobile ? 30 : 40, transform: 'rotate(3deg)', zIndex: 1 }}
+                cat={CATEGORIES[2]} title="Generalka stana 60m²" city="Zagreb · Maksimir" price={90} interested={6}
+              />
+              <HeroCard
+                mobile={isMobile}
+                style={{ position: 'absolute', top: isMobile ? 76 : 90, right: 0, transform: 'rotate(-2deg)', zIndex: 3 }}
+                cat={CATEGORIES[0]} title="Pomoć oko selidbe iz garsonijere" city="Zagreb · Trešnjevka" price={80} interested={4} featured
+              />
+              <HeroCard
+                mobile={isMobile}
+                style={{ position: 'absolute', top: isMobile ? 188 : 220, right: isMobile ? 40 : 60, transform: 'rotate(2deg)', zIndex: 2 }}
+                cat={CATEGORIES[1]} title="Ko će mi sastaviti IKEA PAX?" city="Split · Bol" price={35} interested={2}
+              />
+              <HeroCard
+                mobile={isMobile}
+                style={{ position: 'absolute', top: isMobile ? 270 : 320, right: isMobile ? 14 : 20, transform: 'rotate(-1deg)', zIndex: 4 }}
+                cat={CATEGORIES[4]} title="Čuvanje dva mačka 5 dana" city="Zagreb · Centar" price={70} interested={9}
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -226,10 +223,10 @@ function LandingPage({ go }) {
   );
 }
 
-function HeroCard({ style, cat, title, city, price, interested, featured }) {
+function HeroCard({ style, cat, title, city, price, interested, featured, mobile }) {
   return (
     <div style={{
-      width: 320, padding: 18, borderRadius: 18,
+      width: mobile ? 260 : 320, padding: mobile ? 14 : 18, borderRadius: 18,
       ...style,
       background: '#fff',
       border: featured ? '2px solid var(--ink)' : '1px solid var(--line)',
